@@ -20,6 +20,9 @@ public class City extends AbstractEntity {
 	private String description;
 
 	@Column(nullable = false)
+	private int population;
+
+	@Column(nullable = false)
 	private int favoriteCount;
 
 	@Column(nullable = false)
@@ -33,9 +36,12 @@ public class City extends AbstractEntity {
 	}
 
 	// for hibernate
-	public City(String name) {
+	public City(String name, String description, int population) {
 		Assert.hasText(name, "name must not be null or empty");
 		this.name = name;
+		this.description = description;
+		this.population = population;
+
 		this.favoriteCount = 0;
 		this.createdAt = OffsetDateTime.now();
 	}
