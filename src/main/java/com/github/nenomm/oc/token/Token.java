@@ -36,8 +36,21 @@ public class Token extends AbstractEntity {
 		this.token = UUID.randomUUID().toString();
 	}
 
+	public Token(User user, OffsetDateTime expiresAt, String token) {
+		Assert.notNull(user, "user must not be null");
+		Assert.notNull(expiresAt, "expiresAt must not be null");
+
+		this.user = user;
+		this.expiresAt = expiresAt;
+		this.token = token;
+	}
+
 	public String getToken() {
 		return token;
+	}
+
+	public User getUser() {
+		return user;
 	}
 
 	@Override

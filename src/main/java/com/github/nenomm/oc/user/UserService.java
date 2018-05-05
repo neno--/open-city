@@ -1,6 +1,7 @@
 package com.github.nenomm.oc.user;
 
 import com.github.nenomm.oc.core.EntityIdentifier;
+import com.github.nenomm.oc.security.CustomUserDetails;
 import com.github.nenomm.oc.token.Token;
 import com.github.nenomm.oc.token.TokenRepository;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
 
 @Service
@@ -52,5 +54,14 @@ public class UserService {
 		tokenRepository.save(token);
 
 		return token;
+	}
+
+	@Transactional
+	public CustomUserDetails findByToken(String tokenValue) {
+
+		Token token = tokenRepository.findByToken(tokenValue).get();
+		logger.info("token {} found for user {}", token, token.getUser());
+
+		return new CustomUserDetails(token.getUser().getId());
 	}
 }

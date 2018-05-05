@@ -2,6 +2,8 @@ package com.github.nenomm.oc.config;
 
 import com.github.nenomm.oc.city.City;
 import com.github.nenomm.oc.city.CityRepository;
+import com.github.nenomm.oc.token.Token;
+import com.github.nenomm.oc.token.TokenRepository;
 import com.github.nenomm.oc.user.Password;
 import com.github.nenomm.oc.user.User;
 import com.github.nenomm.oc.user.UserRepository;
@@ -18,6 +20,7 @@ import javax.annotation.PostConstruct;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,13 +34,16 @@ public class DbInitializer {
 
 	private UserRepository userRepository;
 
+	private TokenRepository tokenRepository;
+
 	@Autowired
 	private ResourceLoader resourceLoader;
 
 	@Autowired
-	public DbInitializer(CityRepository cityRepository, UserRepository userRepository) {
+	public DbInitializer(CityRepository cityRepository, UserRepository userRepository, TokenRepository tokenRepository) {
 		this.cityRepository = cityRepository;
 		this.userRepository = userRepository;
+		this.tokenRepository = tokenRepository;
 	}
 
 	@PostConstruct
@@ -51,6 +57,9 @@ public class DbInitializer {
 
 		User testUser = new User("test@test.net", Password.getNew("Test123"));
 		userRepository.save(testUser);
+
+		Token testToken = new Token(testUser, OffsetDateTime.now().plusMinutes(10), "testToken");
+		tokenRepository.save(testToken);
 
 		logger.info("DB init finished.");
 	}

@@ -1,7 +1,10 @@
 package com.github.nenomm.oc.user;
 
 import com.github.nenomm.oc.core.EntityIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/v1/users")
 public class UserResource {
+
+	private Logger logger = LoggerFactory.getLogger(UserResource.class);
 
 	@Autowired
 	private UserService userService;
@@ -43,4 +48,13 @@ public class UserResource {
 
 		return userDTO;
 	}
+
+	@RequestMapping(value = "/{user-id}/favorites", method = RequestMethod.GET)
+	public UserDTO getUserSecured(@PathVariable(name = "user-id") String userUUID, Authentication authentication) {
+
+		logger.info("User is: {}", authentication.getPrincipal());
+
+		return null;
+	}
+
 }
