@@ -49,8 +49,7 @@ public class CityResource {
 
 		}
 
-
-		result.forEach(cityDTO -> cityDTO.add(linkTo(methodOn(CityResource.class).getCity(cityDTO.getIdentifier().getIdentity())).withSelfRel()));
+		result.forEach(cityDTO -> addSelfLink(cityDTO));
 
 		return result;
 	}
@@ -61,14 +60,21 @@ public class CityResource {
 		EntityIdentifier cityIdentifier = EntityIdentifier.fromString(cityUUID);
 
 		CityDTO result = CityDTO.fromCity(cityService.getById(cityIdentifier));
-		result.add(linkTo(methodOn(CityResource.class).getCity(result.getIdentifier().getIdentity())).withSelfRel());
 
-		return result;
+		return addSelfLink(result);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public CityDTO createCity(@Valid @RequestBody CityDTO cityDTO) {
 
-		return CityDTO.fromCity(cityService.create(cityDTO));
+		return addSelfLink(CityDTO.fromCity(cityService.create(cityDTO)));
+
+	}
+
+	private CityDTO addSelfLink(CityDTO cityDTO) {
+
+		cityDTO.add(linkTo(methodOn(CityResource.class).getCity(cityDTO.getIdentifier().getIdentity())).withSelfRel());
+
+		return cityDTO;
 	}
 }

@@ -4,7 +4,6 @@ import com.github.nenomm.oc.core.AbstractEntity;
 import com.github.nenomm.oc.user.User;
 import org.springframework.util.Assert;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +25,6 @@ public class Token extends AbstractEntity {
 	// for hibernate
 	public Token() {
 	}
-
 
 	public Token(User user, OffsetDateTime expiresAt) {
 		Assert.notNull(user, "user must not be null");

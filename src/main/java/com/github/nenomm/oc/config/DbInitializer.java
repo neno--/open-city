@@ -2,6 +2,9 @@ package com.github.nenomm.oc.config;
 
 import com.github.nenomm.oc.city.City;
 import com.github.nenomm.oc.city.CityRepository;
+import com.github.nenomm.oc.user.Password;
+import com.github.nenomm.oc.user.User;
+import com.github.nenomm.oc.user.UserRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
@@ -26,12 +29,15 @@ public class DbInitializer {
 
 	private CityRepository cityRepository;
 
+	private UserRepository userRepository;
+
 	@Autowired
 	private ResourceLoader resourceLoader;
 
 	@Autowired
-	public DbInitializer(CityRepository cityRepository) {
+	public DbInitializer(CityRepository cityRepository, UserRepository userRepository) {
 		this.cityRepository = cityRepository;
+		this.userRepository = userRepository;
 	}
 
 	@PostConstruct
@@ -42,6 +48,9 @@ public class DbInitializer {
 		if (citiesSource.exists()) {
 			readDefaultCities(citiesSource).forEach(cityRepository::save);
 		}
+
+		User testUser = new User("test@test.net", Password.getNew("Test123"));
+		userRepository.save(testUser);
 
 		logger.info("DB init finished.");
 	}

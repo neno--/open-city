@@ -54,4 +54,12 @@ public class User extends AbstractEntity {
 		favorites.remove(city);
 		city.removeUser(this);
 	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public Password getPassword() {
+		return password;
+	}
 }
