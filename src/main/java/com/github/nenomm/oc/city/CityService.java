@@ -25,13 +25,7 @@ public class CityService {
 
 	public City getById(EntityIdentifier identifier) {
 
-		Optional<City> result = cityRepository.findById(identifier);
-
-		if (result.isPresent()) {
-			return result.get();
-		} else {
-			throw new NoSuchElementException();
-		}
+		return cityRepository.findById(identifier).get();
 	}
 
 	public City create(CityDTO cityDTO) {

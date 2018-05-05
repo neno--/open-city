@@ -34,5 +34,13 @@ public class ExceptionTranslator {
 		return new ErrorDTO(e);
 	}
 
+	// default handler
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public ErrorDTO processException(Exception e) {
+		return new ErrorDTO(e);
+	}
+
 
 }
