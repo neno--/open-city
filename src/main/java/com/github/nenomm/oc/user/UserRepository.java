@@ -14,4 +14,6 @@ public interface UserRepository extends CrudRepository<User, EntityIdentifier> {
 
 	public Optional<User> findById(EntityIdentifier identifier);
 
+	public Optional<User> findByEmail(String email);
+
 }

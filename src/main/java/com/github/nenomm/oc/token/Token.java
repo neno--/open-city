@@ -7,17 +7,18 @@ import org.springframework.util.Assert;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
 public class Token extends AbstractEntity {
 
-	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, optional = false)
+	// one user can be logged in from different devices - allow multiple tokens for this case.
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	private User user;
 
-	private String value;
+	private String token;
 
 	@Column(nullable = false)
 	private OffsetDateTime expiresAt;
@@ -32,6 +33,18 @@ public class Token extends AbstractEntity {
 
 		this.user = user;
 		this.expiresAt = expiresAt;
-		this.value = UUID.randomUUID().toString();
+		this.token = UUID.randomUUID().toString();
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	@Override
+	public String toString() {
+		return "Token{" +
+				"token='" + token + '\'' +
+				", expiresAt=" + expiresAt +
+				'}';
 	}
 }

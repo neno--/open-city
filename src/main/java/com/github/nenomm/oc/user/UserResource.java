@@ -25,7 +25,7 @@ public class UserResource {
 
 		EntityIdentifier userIdentifier = EntityIdentifier.fromString(userUUID);
 
-		UserDTO result = UserDTO.fromUser(userService.getById(userIdentifier));
+		UserDTO result = UserDTO.fromUser(userService.findById(userIdentifier));
 
 		return addSelfLink(result);
 	}

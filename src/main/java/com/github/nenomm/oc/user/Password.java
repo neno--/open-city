@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Password {
 
 	@Column(nullable = false, unique = false)
-	String password;
+	private String password;
 
 	private Password(String password) {
 		this.password = password;
