@@ -53,4 +53,16 @@ public class City extends AbstractEntity {
 	public void removeUser(User user) {
 		users.remove(user);
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public int getPopulation() {
+		return population;
+	}
 }
