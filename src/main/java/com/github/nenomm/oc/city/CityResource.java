@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -23,9 +24,31 @@ public class CityResource {
 	private CityService cityService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public List<CityDTO> getAllCities() {
+	public List<CityDTO> getAllCities(@RequestParam(required = false) String sortBy) {
 
-		List<CityDTO> result = cityService.getAllCities().stream().map(CityDTO::fromCity).collect(Collectors.toList());
+		List<CityDTO> result;
+
+		if (sortBy == null) {
+			sortBy = "default";
+		}
+
+		switch (sortBy) {
+			case "createdDate": {
+				result = cityService.getAllCitiesSortByCreatedDate().stream().map(CityDTO::fromCity).collect(Collectors.toList());
+				break;
+			}
+
+			case "popularity": {
+				result = cityService.getAllCitiesSortByPopularity().stream().map(CityDTO::fromCity).collect(Collectors.toList());
+				break;
+			}
+
+			default: {
+				result = cityService.getAllCities().stream().map(CityDTO::fromCity).collect(Collectors.toList());
+			}
+
+		}
+
 
 		result.forEach(cityDTO -> cityDTO.add(linkTo(methodOn(CityResource.class).getCity(cityDTO.getIdentifier().getIdentity())).withSelfRel()));
 

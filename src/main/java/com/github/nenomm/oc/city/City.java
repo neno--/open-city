@@ -65,4 +65,12 @@ public class City extends AbstractEntity {
 	public int getPopulation() {
 		return population;
 	}
+
+	public int getFavoriteCount() {
+		return favoriteCount;
+	}
+
+	public OffsetDateTime getCreatedAt() {
+		return createdAt;
+	}
 }

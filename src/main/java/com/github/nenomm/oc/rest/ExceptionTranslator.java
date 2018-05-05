@@ -1,5 +1,7 @@
 package com.github.nenomm.oc.rest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,10 +15,13 @@ import java.util.NoSuchElementException;
 @ControllerAdvice
 public class ExceptionTranslator {
 
+	private Logger logger = LoggerFactory.getLogger(ExceptionTranslator.class);
+
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public ErrorDTO processMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+		logger.error("Error:", e);
 		return new ErrorDTO(e);
 	}
 
@@ -24,6 +29,7 @@ public class ExceptionTranslator {
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
 	public ErrorDTO processNoSuchElementException(NoSuchElementException e) {
+		logger.error("Error:", e);
 		return new ErrorDTO(e);
 	}
 
@@ -31,6 +37,7 @@ public class ExceptionTranslator {
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ResponseBody
 	public ErrorDTO processDataIntegrityViolationException(DataIntegrityViolationException e) {
+		logger.error("Error:", e);
 		return new ErrorDTO(e);
 	}
 
@@ -39,6 +46,7 @@ public class ExceptionTranslator {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
 	public ErrorDTO processException(Exception e) {
+		logger.error("Error:", e);
 		return new ErrorDTO(e);
 	}
 
