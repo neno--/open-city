@@ -1,5 +1,6 @@
 package com.github.nenomm.oc.rest;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,4 +26,13 @@ public class ExceptionTranslator {
 	public ErrorDTO processNoSuchElementException(NoSuchElementException e) {
 		return new ErrorDTO(e);
 	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ResponseBody
+	public ErrorDTO processDataIntegrityViolationException(DataIntegrityViolationException e) {
+		return new ErrorDTO(e);
+	}
+
+
 }

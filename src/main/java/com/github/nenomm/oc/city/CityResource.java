@@ -3,17 +3,20 @@ package com.github.nenomm.oc.city;
 import com.github.nenomm.oc.core.EntityIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/cities")
+@RequestMapping("/v1/cities")
 public class CityResource {
 
 	@Autowired
@@ -22,17 +25,27 @@ public class CityResource {
 	@RequestMapping(method = RequestMethod.GET)
 	public List<CityDTO> getAllCities() {
 
-		List<CityDTO> result = cityService.getAllCities();
+		List<CityDTO> result = cityService.getAllCities().stream().map(CityDTO::fromCity).collect(Collectors.toList());
 
-		result.forEach(cityDTO -> cityDTO.add(linkTo(methodOn(CityResource.class).get(cityDTO.getIdentifier().getIdentity())).withSelfRel()));
+		result.forEach(cityDTO -> cityDTO.add(linkTo(methodOn(CityResource.class).getCity(cityDTO.getIdentifier().getIdentity())).withSelfRel()));
 
 		return result;
 	}
 
 	@RequestMapping(value = "/{city-id}", method = RequestMethod.GET)
-	public CityDTO get(@PathVariable(name = "city-id") String cityUUID) {
+	public CityDTO getCity(@PathVariable(name = "city-id") String cityUUID) {
 
 		EntityIdentifier cityIdentifier = EntityIdentifier.fromString(cityUUID);
-		return cityService.getById(cityIdentifier);
+
+		CityDTO result = CityDTO.fromCity(cityService.getById(cityIdentifier));
+		result.add(linkTo(methodOn(CityResource.class).getCity(result.getIdentifier().getIdentity())).withSelfRel());
+
+		return result;
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public CityDTO createCity(@Valid @RequestBody CityDTO cityDTO) {
+
+		return CityDTO.fromCity(cityService.create(cityDTO));
 	}
 }

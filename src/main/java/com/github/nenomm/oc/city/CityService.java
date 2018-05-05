@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -14,16 +16,29 @@ public class CityService {
 	@Autowired
 	private CityRepository cityRepository;
 
-	public List<CityDTO> getAllCities() {
+	public List<City> getAllCities() {
 
-		List<CityDTO> result = StreamSupport.stream(cityRepository.findAll().spliterator(), false).map(CityDTO::new)
-				.collect(Collectors.toList());
+		List<City> result = StreamSupport.stream(cityRepository.findAll().spliterator(), false).collect(Collectors.toList());
 
 		return result;
 	}
 
-	public CityDTO getById(EntityIdentifier identifier) {
+	public City getById(EntityIdentifier identifier) {
 
-		return cityRepository.findById(identifier).map(CityDTO::new).get();
+		Optional<City> result = cityRepository.findById(identifier);
+
+		if (result.isPresent()) {
+			return result.get();
+		} else {
+			throw new NoSuchElementException();
+		}
+	}
+
+	public City create(CityDTO cityDTO) {
+		City city = new City(cityDTO.getName(), cityDTO.getDescription(), cityDTO.getPopulation());
+
+		cityRepository.save(city);
+
+		return city;
 	}
 }
