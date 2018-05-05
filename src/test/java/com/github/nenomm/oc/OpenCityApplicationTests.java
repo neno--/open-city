@@ -1,4 +1,4 @@
-package com.github.nenomm.oc.opencity;
+package com.github.nenomm.oc;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
