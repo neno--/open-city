@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,6 +23,16 @@ public class ExceptionTranslator {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public ErrorDTO processMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+
+		logger.error(e.getMessage(), e);
+
+		return new ErrorDTO(e, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorDTO processMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 
 		logger.error(e.getMessage(), e);
 

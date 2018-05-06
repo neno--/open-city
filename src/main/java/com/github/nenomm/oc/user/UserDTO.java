@@ -26,6 +26,11 @@ public class UserDTO extends ResourceSupport {
 	public UserDTO() {
 	}
 
+	public UserDTO(String email, String password) {
+		this.email = email;
+		this.password = password;
+	}
+
 	private UserDTO(User user) {
 		this.identifier = user.getId();
 		this.email = user.getEmail();
