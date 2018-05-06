@@ -18,6 +18,7 @@ public class Token extends AbstractEntity {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	private User user;
 
+	@Column(nullable = false)
 	private String token;
 
 	@Column(nullable = false)
