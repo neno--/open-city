@@ -48,6 +48,7 @@ public class UserService {
 		return userRepository.findById(identifier).get();
 	}
 
+	@Transactional
 	public User create(UserDTO userDTO) {
 		User user = new User(userDTO.getEmail(), Password.getNew(passwordEncoder.encode(userDTO.getPassword())));
 
@@ -56,6 +57,7 @@ public class UserService {
 		return user;
 	}
 
+	@Transactional
 	public Token validateByEmailAndPassword(UserDTO userDTO) {
 		User user = userRepository.findByEmail(userDTO.getEmail()).get();
 

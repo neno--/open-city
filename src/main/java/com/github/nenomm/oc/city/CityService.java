@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -18,6 +19,7 @@ public class CityService {
 	@Autowired
 	private CityRepository cityRepository;
 
+	@Transactional
 	public List<City> getAllCities() {
 
 		logger.info("getting all cities");
@@ -27,6 +29,7 @@ public class CityService {
 		return result;
 	}
 
+	@Transactional
 	public City getById(EntityIdentifier identifier) {
 
 		logger.info("getting city by id");
@@ -34,6 +37,7 @@ public class CityService {
 		return cityRepository.findById(identifier).get();
 	}
 
+	@Transactional
 	public City create(CityDTO cityDTO) {
 		City city = new City(cityDTO.getName(), cityDTO.getDescription(), cityDTO.getPopulation());
 
@@ -42,6 +46,7 @@ public class CityService {
 		return city;
 	}
 
+	@Transactional
 	public List<City> getAllCitiesSortByCreatedDate() {
 
 		logger.info("getting all cities sort by created date");
@@ -51,6 +56,7 @@ public class CityService {
 		return result;
 	}
 
+	@Transactional
 	public List<City> getAllCitiesSortByPopularity() {
 
 		logger.info("getting all cities sort by popularity");
