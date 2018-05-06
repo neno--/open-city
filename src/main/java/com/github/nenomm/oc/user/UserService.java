@@ -9,7 +9,6 @@ import com.github.nenomm.oc.token.TokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -69,9 +68,11 @@ public class UserService {
 		Optional<Token> token = tokenRepository.findByToken(tokenValue);
 
 		if (!token.isPresent()) {
-			throw new AccessDeniedException("invalid token");
+			logger.info("no token found for value {}", tokenValue);
+			return null;
 		} else if (token.get().isExpired()) {
-			throw new AccessDeniedException("token expired");
+			logger.info("token {} expired", token.get());
+			return null;
 		}
 
 		logger.info("token {} found for user {}", token, token.get().getUser());
