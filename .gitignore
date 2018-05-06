@@ -101,3 +101,4 @@ modules.xml
 ### Gradle ###
 .gradle
 /build/
+!gradle-wrapper.jar
