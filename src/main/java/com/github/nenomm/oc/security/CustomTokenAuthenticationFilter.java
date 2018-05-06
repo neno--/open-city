@@ -3,7 +3,6 @@ package com.github.nenomm.oc.security;
 import com.github.nenomm.oc.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -29,18 +28,27 @@ public class CustomTokenAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
+		logger.info("in custom filter");
+
 		String authorization = request.getHeader("Authorization");
 
-		if (StringUtils.isEmpty(authorization)) {
-			throw new AccessDeniedException("missing token");
+		if (!StringUtils.isEmpty(authorization)) {
+
+			CustomUserDetails customUserDetails = userService.findByToken(authorization);
+
+			if (customUserDetails != null) {
+
+				customUserDetails.setAuthenticated(true);
+
+				logger.info("storing user data in security context");
+				SecurityContextHolder.getContext().setAuthentication(customUserDetails);
+
+			} else {
+				logger.info("cannot use token from header");
+			}
+		} else {
+			logger.info("no token found in header");
 		}
-
-		// Retrieve user related data from the token
-		CustomUserDetails customUserDetails = userService.findByToken(authorization);
-
-		// Create our Authentication and let Spring know about it
-		logger.info("storing user data in security context");
-		SecurityContextHolder.getContext().setAuthentication(customUserDetails);
 
 		filterChain.doFilter(request, response);
 	}
