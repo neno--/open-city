@@ -58,6 +58,10 @@ public class Token extends AbstractEntity {
 		return expiresAt.isBefore(OffsetDateTime.now());
 	}
 
+	public OffsetDateTime getExpiresAt() {
+		return expiresAt;
+	}
+
 	@Override
 	public String toString() {
 		return "Token{" +
