@@ -7,10 +7,12 @@ import com.github.nenomm.oc.token.TokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -59,9 +61,14 @@ public class UserService {
 	@Transactional
 	public CustomUserDetails findByToken(String tokenValue) {
 
-		Token token = tokenRepository.findByToken(tokenValue).get();
-		logger.info("token {} found for user {}", token, token.getUser());
+		Optional<Token> token = tokenRepository.findByToken(tokenValue);
 
-		return new CustomUserDetails(token.getUser().getId());
+		if (!token.isPresent()) {
+			throw new AccessDeniedException("invalid token");
+		}
+
+		logger.info("token {} found for user {}", token, token.get().getUser());
+
+		return new CustomUserDetails(token.get().getUser().getId());
 	}
 }

@@ -1,6 +1,8 @@
 package com.github.nenomm.oc.config;
 
+import com.github.nenomm.oc.rest.ExceptionTranslator;
 import com.github.nenomm.oc.security.CustomAuthenticationProvider;
+import com.github.nenomm.oc.security.CustomExceptionHandlerFilter;
 import com.github.nenomm.oc.security.CustomTokenAuthenticationFilter;
 import com.github.nenomm.oc.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private ExceptionTranslator exceptionTranslator;
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(customAuthenticationProvider);
@@ -31,23 +36,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		//http.csrf().disable().authorizeRequests().anyRequest().permitAll();
 
-		//http.addFilterBefore(new CustomTokenAuthenticationFilter(), BasicAuthenticationFilter.class);
+		http.exceptionHandling().and().csrf().disable().headers().frameOptions().disable().and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		// @formatter:off
-		http.exceptionHandling().and()
-				.csrf().disable().headers().frameOptions().disable().and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+		http.authorizeRequests()
 				.antMatchers("/v1/cities/**").permitAll()
-				//.antMatchers("/v1/users/**/favorites").authenticated()
 				.antMatchers("/v1/token").permitAll()
 				.antMatchers("/v1/users").permitAll();
-		// @formatter:on
 
 		http.antMatcher("/v1/users/**/favorites").authorizeRequests()
-				.anyRequest().authenticated()
-				.and()
-				.addFilterBefore(new CustomTokenAuthenticationFilter(userService), BasicAuthenticationFilter.class);
+				.anyRequest().authenticated().and()
+				.addFilterBefore(new CustomTokenAuthenticationFilter(userService), BasicAuthenticationFilter.class)
+				.addFilterBefore(new CustomExceptionHandlerFilter(exceptionTranslator), CustomTokenAuthenticationFilter.class)
+				.authorizeRequests();
 	}
 }
