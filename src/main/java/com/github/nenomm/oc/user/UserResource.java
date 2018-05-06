@@ -1,6 +1,7 @@
 package com.github.nenomm.oc.user;
 
 import com.github.nenomm.oc.city.CityDTO;
+import com.github.nenomm.oc.city.CityResource;
 import com.github.nenomm.oc.core.EntityIdentifier;
 import com.github.nenomm.oc.security.CustomUserDetails;
 import org.slf4j.Logger;
@@ -49,13 +50,6 @@ public class UserResource {
 
 	}
 
-	private UserDTO addSelfLink(UserDTO userDTO) {
-
-		userDTO.add(linkTo(methodOn(UserResource.class).getUser(userDTO.getIdentifier().getIdentity())).withSelfRel());
-
-		return userDTO;
-	}
-
 	@RequestMapping(value = "/{user-id}/favorites", method = RequestMethod.GET)
 	public List<CityDTO> getFavorites(@PathVariable(name = "user-id") String userUUID) {
 
@@ -63,7 +57,7 @@ public class UserResource {
 
 		EntityIdentifier userIdentifier = EntityIdentifier.fromString(userUUID);
 
-		userService.getFavorites(userIdentifier).forEach(city -> results.add(CityDTO.fromCity(city)));
+		userService.getFavorites(userIdentifier).forEach(city -> results.add(addSelfLink(CityDTO.fromCity(city))));
 
 		return results;
 	}
@@ -77,7 +71,7 @@ public class UserResource {
 
 		if (userIdentifier.equals(customUserDetails.getUserId())) {
 
-			return CityDTO.fromCity(userService.addFavorite(cityDTO, userIdentifier));
+			return addSelfLink(CityDTO.fromCity(userService.addFavorite(cityDTO, userIdentifier)));
 
 		} else {
 			throw new RuntimeException("user has no privilege");
@@ -100,4 +94,19 @@ public class UserResource {
 		}
 	}
 
+	// todo: push up to (global) abstract controller
+
+	private UserDTO addSelfLink(UserDTO userDTO) {
+
+		userDTO.add(linkTo(methodOn(UserResource.class).getUser(userDTO.getIdentifier().getIdentity())).withSelfRel());
+
+		return userDTO;
+	}
+
+	private CityDTO addSelfLink(CityDTO cityDTO) {
+
+		cityDTO.add(linkTo(methodOn(CityResource.class).getCity(cityDTO.getIdentifier().getIdentity())).withSelfRel());
+
+		return cityDTO;
+	}
 }
