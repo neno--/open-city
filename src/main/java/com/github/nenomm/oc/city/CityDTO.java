@@ -22,7 +22,10 @@ public class CityDTO extends ResourceSupport {
 	private int population;
 
 	@JsonCreator
-	public CityDTO(City city) {
+	public CityDTO() {
+	}
+
+	private CityDTO(City city) {
 		this.identifier = city.getId();
 		this.name = city.getName();
 		this.description = city.getDescription();

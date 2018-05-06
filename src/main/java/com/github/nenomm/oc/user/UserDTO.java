@@ -23,7 +23,10 @@ public class UserDTO extends ResourceSupport {
 	}
 
 	@JsonCreator
-	public UserDTO(User user) {
+	public UserDTO() {
+	}
+
+	private UserDTO(User user) {
 		this.identifier = user.getId();
 		this.email = user.getEmail();
 		this.password = user.getPassword().toString();

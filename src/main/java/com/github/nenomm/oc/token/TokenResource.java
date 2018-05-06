@@ -21,6 +21,11 @@ public class TokenResource {
 	public TokenDTO createToken(@Valid @RequestBody UserDTO userDTO) {
 
 		return TokenDTO.fromToken(userService.validateByEmailAndPassword(userDTO));
+	}
 
+	@RequestMapping(method = RequestMethod.DELETE)
+	public void deleteToken(@Valid @RequestBody TokenDTO tokenDTO) {
+
+		userService.deleteToken(tokenDTO);
 	}
 }

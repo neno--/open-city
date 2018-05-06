@@ -4,6 +4,7 @@ import com.github.nenomm.oc.config.AppProperties;
 import com.github.nenomm.oc.core.EntityIdentifier;
 import com.github.nenomm.oc.security.CustomUserDetails;
 import com.github.nenomm.oc.token.Token;
+import com.github.nenomm.oc.token.TokenDTO;
 import com.github.nenomm.oc.token.TokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,5 +77,12 @@ public class UserService {
 		logger.info("token {} found for user {}", token, token.get().getUser());
 
 		return new CustomUserDetails(token.get().getUser().getId());
+	}
+
+	public void deleteToken(TokenDTO tokenDTO) {
+
+		Optional<Token> token = tokenRepository.findByToken(tokenDTO.getToken());
+
+		tokenRepository.delete(token.get());
 	}
 }

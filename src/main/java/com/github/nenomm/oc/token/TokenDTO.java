@@ -1,10 +1,16 @@
 package com.github.nenomm.oc.token;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class TokenDTO {
 
 	private String token;
 
-	public TokenDTO(Token token) {
+	@JsonCreator
+	public TokenDTO() {
+	}
+
+	private TokenDTO(Token token) {
 		this.token = token.getToken();
 	}
 
