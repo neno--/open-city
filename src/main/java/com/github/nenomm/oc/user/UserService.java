@@ -1,5 +1,6 @@
 package com.github.nenomm.oc.user;
 
+import com.github.nenomm.oc.config.AppProperties;
 import com.github.nenomm.oc.core.EntityIdentifier;
 import com.github.nenomm.oc.security.CustomUserDetails;
 import com.github.nenomm.oc.token.Token;
@@ -18,6 +19,9 @@ import java.util.Optional;
 public class UserService {
 
 	private Logger logger = LoggerFactory.getLogger(UserService.class);
+
+	@Autowired
+	private AppProperties appProperties;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -50,7 +54,7 @@ public class UserService {
 			throw new RuntimeException("invalid credentials");
 		}
 
-		Token token = new Token(user, OffsetDateTime.now().plusMinutes(10));
+		Token token = new Token(user, OffsetDateTime.now().plusSeconds(appProperties.getToken().getLifetime()));
 		logger.info("created new token {} for user {}", token, user);
 
 		tokenRepository.save(token);
@@ -65,6 +69,8 @@ public class UserService {
 
 		if (!token.isPresent()) {
 			throw new AccessDeniedException("invalid token");
+		} else if (token.get().isExpired()) {
+			throw new AccessDeniedException("token expired");
 		}
 
 		logger.info("token {} found for user {}", token, token.get().getUser());

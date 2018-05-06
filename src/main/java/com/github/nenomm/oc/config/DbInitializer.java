@@ -40,6 +40,9 @@ public class DbInitializer {
 	private ResourceLoader resourceLoader;
 
 	@Autowired
+	AppProperties appProperties;
+
+	@Autowired
 	public DbInitializer(CityRepository cityRepository, UserRepository userRepository, TokenRepository tokenRepository) {
 		this.cityRepository = cityRepository;
 		this.userRepository = userRepository;
@@ -58,7 +61,7 @@ public class DbInitializer {
 		User testUser = new User("test@test.net", Password.getNew("Test123"));
 		userRepository.save(testUser);
 
-		Token testToken = new Token(testUser, OffsetDateTime.now().plusMinutes(10), "testToken");
+		Token testToken = new Token(testUser, OffsetDateTime.now().plusSeconds(appProperties.getToken().getLifetime()), "testToken");
 		tokenRepository.save(testToken);
 
 		logger.info("DB init finished.");
