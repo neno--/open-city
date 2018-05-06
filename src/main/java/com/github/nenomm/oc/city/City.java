@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -29,7 +30,7 @@ public class City extends AbstractEntity {
 	private OffsetDateTime createdAt;
 
 	@ManyToMany(mappedBy = "favorites")
-	Set<User> users;
+	Set<User> users = new HashSet<User>();
 
 	// for hibernate
 	public City() {

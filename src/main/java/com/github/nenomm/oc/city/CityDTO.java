@@ -25,6 +25,12 @@ public class CityDTO extends ResourceSupport {
 	public CityDTO() {
 	}
 
+	public CityDTO(String name, String description, int population) {
+		this.name = name;
+		this.description = description;
+		this.population = population;
+	}
+
 	private CityDTO(City city) {
 		this.identifier = city.getId();
 		this.name = city.getName();

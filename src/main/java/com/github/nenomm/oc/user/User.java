@@ -15,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -38,7 +39,7 @@ public class User extends AbstractEntity {
 	})
 
 	@JoinTable(name = "favorites")
-	private Set<City> favorites;
+	private Set<City> favorites = new HashSet<City>();
 
 	// for hibernate
 	public User() {
