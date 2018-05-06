@@ -9,7 +9,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +34,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = OpenCityApp.class)
-@ActiveProfiles("route-tests")
 public class FavoritesIntegrationTest {
 
 	private MockMvc restMockMvc;
@@ -88,7 +86,7 @@ public class FavoritesIntegrationTest {
 
 		this.restMockMvc
 				.perform(get("/v1/users/{user_uuid}/favorites", TEST_USER_UUID)
-						.contentType(MediaType.APPLICATION_JSON_UTF8))
+						.contentType(MediaType.APPLICATION_JSON_UTF8).header(AUTH_HEADER, TEST_TOKEN))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 				.andExpect(jsonPath("$", hasSize(1)))
 				.andExpect(jsonPath("$[0]['name']", equalTo(CITY_DTO.getName())));

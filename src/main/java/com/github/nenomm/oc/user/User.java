@@ -30,6 +30,7 @@ public class User extends AbstractEntity {
 	@Embedded
 	private Password password;
 
+	// todo: for email verification process
 	@Column(nullable = false)
 	private boolean verified;
 
@@ -51,6 +52,7 @@ public class User extends AbstractEntity {
 
 		this.email = email;
 		this.password = password;
+		this.verified = false;
 	}
 
 	public User(String email, Password password, String uuid) {

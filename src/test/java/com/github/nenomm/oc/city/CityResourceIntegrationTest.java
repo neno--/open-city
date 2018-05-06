@@ -32,7 +32,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = OpenCityApp.class)
-@ActiveProfiles("route-tests")
 public class CityResourceIntegrationTest {
 
 	private MockMvc restMockMvc;

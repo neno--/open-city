@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = OpenCityApp.class)
-@ActiveProfiles("route-tests")
 public class UserManagementIntegrationTest {
 
 	private MockMvc restMockMvc;
@@ -75,7 +74,7 @@ public class UserManagementIntegrationTest {
 				.perform(post("/v1/token")
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
 						.content(mapper.writeValueAsString(NEW_USER_DTO)))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
