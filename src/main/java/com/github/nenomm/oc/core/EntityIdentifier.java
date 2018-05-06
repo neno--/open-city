@@ -18,7 +18,8 @@ public class EntityIdentifier implements Serializable {
 	}
 
 	private EntityIdentifier(String uuid) {
-		this.identity = (UUID.fromString(uuid).toString());
+		//this.identity = (UUID.fromString(uuid).toString());
+		this.identity = uuid;    // relaxed for testing purposes
 	}
 
 	public static EntityIdentifier fromString(String uuid) {

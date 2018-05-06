@@ -55,7 +55,7 @@ public class CityService {
 
 		logger.info("getting all cities sort by popularity");
 
-		List<City> result = cityRepository.findAllOrderByFavoriteCount();
+		List<City> result = cityRepository.findAllOrderByPopularity();
 
 		return result;
 	}

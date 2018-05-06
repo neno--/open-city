@@ -12,46 +12,51 @@ import javax.persistence.Transient;
 @MappedSuperclass
 public class AbstractEntity implements Persistable<EntityIdentifier> {
 
-    @EmbeddedId
-    private EntityIdentifier id = new EntityIdentifier();
+	@EmbeddedId
+	private EntityIdentifier id = new EntityIdentifier();
 
-    @Transient
-    private boolean isNew = true;
+	@Transient
+	private boolean isNew = true;
 
-    @Override
-    public boolean equals(Object obj) {
+	@Override
+	public boolean equals(Object obj) {
 
-        if (this == obj) {
-            return true;
-        }
+		if (this == obj) {
+			return true;
+		}
 
-        if (obj == null || !(obj.getClass().equals(this.getClass()))) {
-            return false;
-        }
+		if (obj == null || !(obj.getClass().equals(this.getClass()))) {
+			return false;
+		}
 
-        AbstractEntity that = (AbstractEntity) obj;
+		AbstractEntity that = (AbstractEntity) obj;
 
-        return ObjectUtils.nullSafeEquals(this.getId(), that.getId());
-    }
+		return ObjectUtils.nullSafeEquals(this.getId(), that.getId());
+	}
 
-    @Override
-    public int hashCode() {
-        return getId().hashCode();
-    }
+	// for testing purposes only
+	public void setId(EntityIdentifier id) {
+		this.id = id;
+	}
 
-    @Override
-    public EntityIdentifier getId() {
-        return id;
-    }
+	@Override
+	public int hashCode() {
+		return getId().hashCode();
+	}
 
-    @Override
-    public boolean isNew() {
-        return isNew;
-    }
+	@Override
+	public EntityIdentifier getId() {
+		return id;
+	}
 
-    @PostPersist
-    @PostLoad
-    void markNotNew() {
-        this.isNew = false;
-    }
+	@Override
+	public boolean isNew() {
+		return isNew;
+	}
+
+	@PostPersist
+	@PostLoad
+	void markNotNew() {
+		this.isNew = false;
+	}
 }

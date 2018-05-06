@@ -23,7 +23,7 @@ public class City extends AbstractEntity {
 	private int population;
 
 	@Column(nullable = false)
-	private int favoriteCount;
+	private int popularity;
 
 	@Column(nullable = false)
 	private OffsetDateTime createdAt;
@@ -42,7 +42,7 @@ public class City extends AbstractEntity {
 		this.description = description;
 		this.population = population;
 
-		this.favoriteCount = 0;
+		this.popularity = 0;
 		this.createdAt = OffsetDateTime.now();
 	}
 
@@ -66,11 +66,20 @@ public class City extends AbstractEntity {
 		return population;
 	}
 
-	public int getFavoriteCount() {
-		return favoriteCount;
+	public int getPopularity() {
+		return popularity;
 	}
 
 	public OffsetDateTime getCreatedAt() {
 		return createdAt;
 	}
+
+	public void increasePopularity() {
+		popularity++;
+	}
+
+	public void decreasePopularity() {
+		popularity--;
+	}
+
 }

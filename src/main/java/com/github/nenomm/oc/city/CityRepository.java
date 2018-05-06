@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CityRepository extends CrudRepository<City, EntityIdentifier> {
@@ -13,6 +14,8 @@ public interface CityRepository extends CrudRepository<City, EntityIdentifier> {
 	@Query("select city from City city order by city.createdAt asc")
 	public List<City> findAllOrderByCreatedAt();
 
-	@Query("select city from City city order by city.favoriteCount desc")
-	public List<City> findAllOrderByFavoriteCount();
+	@Query("select city from City city order by city.popularity desc")
+	public List<City> findAllOrderByPopularity();
+
+	public Optional<City> findByName(String name);
 }

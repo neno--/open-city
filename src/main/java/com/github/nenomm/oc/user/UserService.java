@@ -1,5 +1,8 @@
 package com.github.nenomm.oc.user;
 
+import com.github.nenomm.oc.city.City;
+import com.github.nenomm.oc.city.CityDTO;
+import com.github.nenomm.oc.city.CityRepository;
 import com.github.nenomm.oc.config.AppProperties;
 import com.github.nenomm.oc.core.EntityIdentifier;
 import com.github.nenomm.oc.security.CustomUserDetails;
@@ -9,11 +12,13 @@ import com.github.nenomm.oc.token.TokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -28,6 +33,9 @@ public class UserService {
 
 	@Autowired
 	private TokenRepository tokenRepository;
+
+	@Autowired
+	private CityRepository cityRepository;
 
 	public User findById(EntityIdentifier identifier) {
 
@@ -68,11 +76,9 @@ public class UserService {
 		Optional<Token> token = tokenRepository.findByToken(tokenValue);
 
 		if (!token.isPresent()) {
-			logger.info("no token found for value {}", tokenValue);
-			return null;
+			throw new AccessDeniedException("invalid token");
 		} else if (token.get().isExpired()) {
-			logger.info("token {} expired", token.get());
-			return null;
+			throw new AccessDeniedException("token expired");
 		}
 
 		logger.info("token {} found for user {}", token, token.get().getUser());
@@ -85,5 +91,37 @@ public class UserService {
 		Optional<Token> token = tokenRepository.findByToken(tokenDTO.getToken());
 
 		tokenRepository.delete(token.get());
+	}
+
+	@Transactional
+	public Set<City> getFavorites(EntityIdentifier identifier) {
+
+		return findById(identifier).getFavorites();
+	}
+
+	@Transactional
+	public City addFavorite(CityDTO cityDTO, EntityIdentifier identifier) {
+
+		City city = cityRepository.findByName(cityDTO.getName()).get();
+		User user = userRepository.findById(identifier).get();
+
+		logger.info("adding city {} to favorites for user {}", user, city);
+
+		user.addCity(city);
+
+		return city;
+	}
+
+	@Transactional
+	public City removeFavorite(CityDTO cityDTO, EntityIdentifier identifier) {
+
+		City city = cityRepository.findByName(cityDTO.getName()).get();
+		User user = userRepository.findById(identifier).get();
+
+		logger.info("removing city {} from favorites for user {}", user, city);
+
+		user.removeCity(city);
+
+		return city;
 	}
 }

@@ -1,6 +1,8 @@
 package com.github.nenomm.oc.user;
 
+import com.github.nenomm.oc.city.CityDTO;
 import com.github.nenomm.oc.core.EntityIdentifier;
+import com.github.nenomm.oc.security.CustomUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -50,11 +54,47 @@ public class UserResource {
 	}
 
 	@RequestMapping(value = "/{user-id}/favorites", method = RequestMethod.GET)
-	public UserDTO getUserSecured(@PathVariable(name = "user-id") String userUUID, Authentication authentication) {
+	public List<CityDTO> getFavorites(@PathVariable(name = "user-id") String userUUID) {
 
-		logger.info("User is: {}", authentication.getPrincipal());
+		List<CityDTO> results = new ArrayList<>();
 
-		return null;
+		EntityIdentifier userIdentifier = EntityIdentifier.fromString(userUUID);
+
+		userService.getFavorites(userIdentifier).forEach(city -> results.add(CityDTO.fromCity(city)));
+
+		return results;
+	}
+
+	@RequestMapping(value = "/{user-id}/favorites", method = RequestMethod.POST)
+	public CityDTO addFavorite(@RequestBody CityDTO cityDTO, @PathVariable(name = "user-id") String userUUID, Authentication authentication) {
+
+		CustomUserDetails customUserDetails = (CustomUserDetails) authentication;
+
+		EntityIdentifier userIdentifier = EntityIdentifier.fromString(userUUID);
+
+		if (userIdentifier.equals(customUserDetails.getUserId())) {
+
+			return CityDTO.fromCity(userService.addFavorite(cityDTO, userIdentifier));
+
+		} else {
+			throw new RuntimeException("user has no privilege");
+		}
+	}
+
+	@RequestMapping(value = "/{user-id}/favorites", method = RequestMethod.DELETE)
+	public void removeFavorite(@RequestBody CityDTO cityDTO, @PathVariable(name = "user-id") String userUUID, Authentication authentication) {
+
+		CustomUserDetails customUserDetails = (CustomUserDetails) authentication;
+
+		EntityIdentifier userIdentifier = EntityIdentifier.fromString(userUUID);
+
+		if (userIdentifier.equals(customUserDetails.getUserId())) {
+
+			userService.removeFavorite(cityDTO, userIdentifier);
+
+		} else {
+			throw new RuntimeException("user has no privilege");
+		}
 	}
 
 }

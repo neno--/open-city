@@ -58,7 +58,7 @@ public class DbInitializer {
 			readDefaultCities(citiesSource).forEach(cityRepository::save);
 		}
 
-		User testUser = new User("test@test.net", Password.getNew("Test123"));
+		User testUser = new User("test@test.net", Password.getNew("Test123"), "testUUID");
 		userRepository.save(testUser);
 
 		Token testToken = new Token(testUser, OffsetDateTime.now().plusSeconds(appProperties.getToken().getLifetime()), "testToken");
