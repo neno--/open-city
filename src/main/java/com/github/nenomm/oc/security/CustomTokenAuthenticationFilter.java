@@ -37,6 +37,7 @@ public class CustomTokenAuthenticationFilter extends OncePerRequestFilter {
 
 		// Retrieve user related data from the token
 		CustomUserDetails customUserDetails = userService.findByToken(authorization);
+		customUserDetails.setAuthenticated(true);
 
 		// Create our Authentication and let Spring know about it
 		logger.info("storing user data in security context");
