@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,6 +25,9 @@ import java.util.Set;
 public class UserService {
 
 	private Logger logger = LoggerFactory.getLogger(UserService.class);
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private AppProperties appProperties;
@@ -45,7 +49,7 @@ public class UserService {
 	}
 
 	public User create(UserDTO userDTO) {
-		User user = new User(userDTO.getEmail(), Password.getNew(userDTO.getPassword()));
+		User user = new User(userDTO.getEmail(), Password.getNew(passwordEncoder.encode(userDTO.getPassword())));
 
 		userRepository.save(user);
 
@@ -57,7 +61,7 @@ public class UserService {
 
 		logger.info("found user by email: {}", user.getEmail());
 
-		if (!user.getPassword().equals(Password.getNew(userDTO.getPassword()))) {
+		if (!passwordEncoder.matches(userDTO.getPassword(), user.getPassword().toString())) {
 			logger.info("password do not match for user {}", user);
 			throw new RuntimeException("invalid credentials");
 		}

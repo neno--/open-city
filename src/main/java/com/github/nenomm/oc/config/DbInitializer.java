@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -36,6 +37,8 @@ public class DbInitializer {
 
 	private TokenRepository tokenRepository;
 
+	private PasswordEncoder passwordEncoder;
+
 	@Autowired
 	private ResourceLoader resourceLoader;
 
@@ -43,10 +46,12 @@ public class DbInitializer {
 	AppProperties appProperties;
 
 	@Autowired
-	public DbInitializer(CityRepository cityRepository, UserRepository userRepository, TokenRepository tokenRepository) {
+	public DbInitializer(CityRepository cityRepository, UserRepository userRepository, TokenRepository tokenRepository,
+						 PasswordEncoder passwordEncoder) {
 		this.cityRepository = cityRepository;
 		this.userRepository = userRepository;
 		this.tokenRepository = tokenRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@PostConstruct
@@ -58,10 +63,12 @@ public class DbInitializer {
 			readDefaultCities(citiesSource).forEach(cityRepository::save);
 		}
 
-		User testUser = new User("test@test.net", Password.getNew("Test123"), "testUUID");
+		User testUser = new User("test@test.net",
+				Password.getNew(passwordEncoder.encode("Test123")), "testUUID");
 		userRepository.save(testUser);
 
-		Token testToken = new Token(testUser, OffsetDateTime.now().plusSeconds(appProperties.getToken().getLifetime()), "testToken");
+		Token testToken = new Token(testUser,
+				OffsetDateTime.now().plusSeconds(appProperties.getToken().getLifetime()), "testToken");
 		tokenRepository.save(testToken);
 
 		logger.info("DB init finished.");
